@@ -1,0 +1,52 @@
+---
+- hosts: ghost.live
+  name: Install & Set MariaDB
+  tasks:
+    - name: Installo i pacchetti necessari
+      apt:
+        name: ['software-properties-common', 'dirmngr', 'python3-pymysql', 'python-pymysql']
+        state: present
+    - name: Aggiungo la Key
+      apt_key:
+        url: https://mariadb.org/mariadb_release_signing_key.asc
+    - name: Aggiungo il Repo MariaDB
+      apt_repository:
+        repo: deb [arch=amd64,arm64,ppc64el] https://mirror.vpsfree.cz/mariadb/repo/10.5/debian buster main
+        state: present
+    - name: apt update
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+    - name: Installo MariaDB
+      apt:
+        name: ['mariadb-server']
+        state: present
+    - name: Abilito Systemd
+      systemd:
+        name: mariadb
+        daemon_reload: yes
+        enabled: yes
+    - name: mariadb restart
+      service:
+        name: mariadb
+        state: restarted
+    - name: Modifico root password
+      mysql_user:
+        name: root
+        password: '{{ mysql_root_password }}'
+        login_unix_socket: /run/mysqld/mysqld.sock
+        state: present
+    - name: Creo .my.cnf
+      copy:
+        content: |
+          [client]
+          user=root
+          password={{ mysql_root_password }}
+        dest: ~/.my.cnf
+        force: yes 
+    - name: Rimuovo tutti gli utenti anonimi
+      mysql_user:
+        name: ''
+        host_all: yes
+        state: absent

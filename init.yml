@@ -1,6 +1,6 @@
 ---
 - hosts: ghost.live
-  name: Install Packages
+  name: Init del server
   tasks:
     - name: Creo il gruppo demo
       group:
@@ -32,11 +32,11 @@
     - name: apt upgrade
       apt:
         upgrade: yes
-    - name: Install nodejs
+    - name: Installo nodejs
       apt:
         name: ['nodejs']
         state: present
-    - name: Install ghost
+    - name: Installo ghost
       npm:
         name: ghost-cli
         global: yes

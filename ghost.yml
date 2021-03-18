@@ -1,37 +1,29 @@
 ---
 - hosts: ghost.live
-  name: Init Ghost
+  name: Creo un blog ghost
   tasks:
-    - name: Create dir {{ site_path }}
+    - name: Creo la cartella {{ site_path }}
       file:
         path: "/var/www/{{ site_path }}"
         state: directory
         mode: '0775'
         owner: demo
         group: demo
-    - name: Install ghost - create ghost database
+    - name: Creo il database
       mysql_db:
         name: "{{ ghost_db_name }}"
         state: present
-    - name: Install ghost - create ghost db user
+    - name: Creo l'utente ghost
       mysql_user:
         name: "{{ ghost_db_user }}"
         password: "{{ ghost_db_password }}"
         host: "{{ ghost_db_host }}"
         login_host: "{{ ghost_db_host }}"
         priv: "{{ ghost_db_name }}.*:ALL"
-        state: present   
-    - name: Install ghost
-      shell: "ghost install --url={{ ghost_project_url }} --db={{ ghost_db }} --dbhost={{ ghost_db_host }} --dbuser={{ ghost_db_user }} --dbpass={{ ghost_db_password }} --dbname={{ ghost_db_name }} --mail={{ ghost_smtp }} --mailservice={{ ghost_smtp_service }} --mailuser={{ ghost_smtp_user }} --mailpass={{ ghost_smtp_password }} --mailport={{ ghost_smtp_port }} --sslemail={{ ghost_letsencrypt_user }} --no-setup-ssl --no-prompt --start"
+        state: present
+    - name: Installo ghost
+      shell: "ghost install --url={{ ghost_project_url }} --db={{ ghost_db }} --dbhost={{ ghost_db_host }} --dbuser={{ ghost_db_user }} --dbpass={{ ghost_db_password }} --dbname={{ ghost_db_name }} --mail={{ ghost_smtp }} --mailservice={{ ghost_smtp_service }} --mailuser={{ ghost_smtp_user }} --mailpass={{ ghost_smtp_password }} --mailport={{ ghost_smtp_port }} --sslemail={{ ghost_letsencrypt_user }} --no-setup-ssl --no-stack --no-prompt --start"
+      become: true
+      become_user: demo
       args:
         chdir: "/var/www/{{ site_path }}"
-    - name: Install Ghost - setup SSL
-      shell: "ghost config url {{ ghost_project_url_secure }} && ghost setup ssl --sslemail={{ ghost_letsencrypt_user }} --no-prompt"
-      args:
-        chdir: "/var/www/{{ site_path }}"
-      when: "not ghost_setup_skip_ssl"
-    - name: Install Ghost - Setup Mail
-      shell: "ghost config mail.from {{ ghost_mail_from }}"
-      args:
-        chdir: "{{ ghost_install_dir }}"
-      when: "ghost_mail_from is defined"
