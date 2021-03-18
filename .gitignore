@@ -1,6 +1,6 @@
 # Ansible
 hosts
-host_vars/ghost.live/*
+host_vars/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
