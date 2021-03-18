@@ -1,0 +1,50 @@
+---
+- hosts: ghost.live
+  name: Install Packages
+  tasks:
+    - name: Creo il gruppo demo
+      group:
+        name: demo
+        state: present
+    - name: Creo utente demo
+      user:
+        name: demo
+        groups: demo
+        append: yes
+        shell: /bin/bash
+        password: "{{ user_password | password_hash('sha512', 'mysecretsalt') }}"
+    - name: apt update
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+    - name: Installo i pacchetti
+      apt:
+        name: ['curl', 'nginx', 'sudo']
+        state: present
+    - name: Scarico il repo nodejs
+      shell: curl -sL https://deb.nodesource.com/setup_14.x | bash
+    - name: apt update
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+    - name: apt upgrade
+      apt:
+        upgrade: yes
+    - name: Install nodejs
+      apt:
+        name: ['nodejs']
+        state: present
+    - name: Install ghost
+      npm:
+        name: ghost-cli
+        global: yes
+        version: '1.16.3'
+    - name: Create dir {{ site_path }}
+      file:
+        path: "/var/www/{{ site_path }}"
+        state: directory
+        mode: '0775'
+        owner: demo
+        group: demo
