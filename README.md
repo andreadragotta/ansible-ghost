@@ -31,4 +31,11 @@ init.yml
 ---
 user: demo
 group: demo
+user_password: password
+```
+
+database.yml
+```
+---
+mysql_root_password: mypassword
 ```
