@@ -2,17 +2,23 @@
 - hosts: ghost.live
   name: Init del server
   tasks:
+    - name: Mi assicuro che esista il gruppo wheel
+      group:
+        name: wheel
+        state: present
     - name: Creo il gruppo demo
       group:
-        name: {{ group }}
+        name: "{{ group }}"
         state: present
     - name: Creo utente demo
       user:
-        name: {{ user }}
-        groups: {{ group }}
+        name: "{{ user }}"
+        groups: "{{ group }}"
         append: yes
         shell: /bin/bash
         password: "{{ user_password | password_hash('sha512', 'mysecretsalt') }}"
+    - name: Privilegi sudo
+      shell: "usermod -aG sudo {{ user }}"
     - name: apt update
       apt:
         update_cache: yes

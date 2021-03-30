@@ -22,7 +22,7 @@
         priv: "{{ ghost_db_name }}.*:ALL"
         state: present
     - name: Installo ghost
-      shell: "ghost install --url={{ ghost_project_url }} --db={{ ghost_db }} --dbhost={{ ghost_db_host }} --dbuser={{ ghost_db_user }} --dbpass={{ ghost_db_password }} --dbname={{ ghost_db_name }} --mail={{ ghost_smtp }} --mailservice={{ ghost_smtp_service }} --mailuser={{ ghost_smtp_user }} --mailpass={{ ghost_smtp_password }} --mailport={{ ghost_smtp_port }} --sslemail={{ ghost_letsencrypt_user }} --no-setup-ssl --no-stack --no-prompt --start"
+      shell: "ghost install --url={{ ghost_project_url }} --db={{ ghost_db }} --dbhost={{ ghost_db_host }} --dbuser={{ ghost_db_user }} --dbpass={{ ghost_db_password }} --dbname={{ ghost_db_name }} --mail={{ ghost_smtp }} --mailservice={{ ghost_smtp_service }} --mailuser={{ ghost_smtp_user }} --mailpass={{ ghost_smtp_password }} --mailport={{ ghost_smtp_port }} --sslemail={{ ghost_letsencrypt_user }} --no-stack --no-prompt --start"
       become: true
       become_user: demo
       args:

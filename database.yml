@@ -1,35 +1,23 @@
 ---
 - hosts: ghost.live
-  name: Install & Set MariaDB
+  name: Install & Set MySQL
   tasks:
     - name: Installo i pacchetti necessari
       apt:
-        name: ['software-properties-common', 'dirmngr', 'python3-pymysql', 'python-pymysql']
+        name: ['software-properties-common', 'dirmngr', 'python3-pymysql']
         state: present
-    - name: Aggiungo la Key
-      apt_key:
-        url: https://mariadb.org/mariadb_release_signing_key.asc
-    - name: Aggiungo il Repo MariaDB
-      apt_repository:
-        repo: deb [arch=amd64,arm64,ppc64el] https://mirror.vpsfree.cz/mariadb/repo/10.5/debian buster main
-        state: present
-    - name: apt update
+    - name: Installo MySQL
       apt:
-        update_cache: yes
-        force_apt_get: yes
-        cache_valid_time: 3600
-    - name: Installo MariaDB
-      apt:
-        name: ['mariadb-server']
+        name: ['mysql-server']
         state: present
     - name: Abilito Systemd
       systemd:
-        name: mariadb
+        name: mysql
         daemon_reload: yes
         enabled: yes
-    - name: mariadb restart
+    - name: mysqld restart
       service:
-        name: mariadb
+        name: mysql
         state: restarted
     - name: Modifico root password
       mysql_user:
